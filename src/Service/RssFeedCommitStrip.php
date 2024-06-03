@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class RssFeedCommitStrip
@@ -9,10 +10,12 @@ class RssFeedCommitStrip
     const IMAGE_CLASS = 'size-full';
     const IMAGE_EXTENSIONS = 'jpg|gif|png|JPG|GIF|PNG';
     private $rssFeedCommitStripClient;
+    private $logger;
 
-    public function __construct(HttpClientInterface $rssFeedCommitStripClient)
+    public function __construct(HttpClientInterface $rssFeedCommitStripClient, LoggerInterface $logger)
     {
         $this->rssFeedCommitStripClient = $rssFeedCommitStripClient;
+        $this->logger = $logger;
     }
 
     public function getListUrlNewsHasImages(): array
@@ -36,11 +39,13 @@ class RssFeedCommitStrip
                 }
             }
 
-        } catch (\Exception $e) {
+            return $articles;
 
+        } catch (\Exception $e) {
+            $this->logger->error('Error fetching Rss Feed CommitStrip data', ['exception' => $e]);
+            return [];
         }
 
-        return $articles;
     }
 
     function getImageSrc($htmlContent) :?string
