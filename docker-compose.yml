@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+
+  www:
+    build: ./docker/php
+    container_name: www_docker_api
+    ports:
+      - "8741:80"
+    volumes:
+      - ./docker/php/vhosts:/etc/apache2/sites-enabled
+      - ./:/var/www
+    restart: always
+    networks:
+      - dev
+
+networks:
+  dev:
+
+volumes:
+  db-data:
