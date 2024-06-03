@@ -20,7 +20,6 @@ class RssFeedCommitStrip
 
     public function getListUrlNewsHasImages(): array
     {
-        $articles = [];
         try {
             $response = $this->rssFeedCommitStripClient->request(
                 'GET',
@@ -28,7 +27,8 @@ class RssFeedCommitStrip
             );
 
             $data = simplexml_load_string($response->getContent(), 'SimpleXMLElement', LIBXML_NOCDATA);;
-
+            $articles = [];
+            
             foreach ($data->channel->item as $item) {
                 $srcImage = $this->getImageSrc((string) $item->children("content", true));
                 if (!empty($srcImage)) {
